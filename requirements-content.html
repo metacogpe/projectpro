@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <h1 class="main-title mb-4 md:mb-0">요구사항 관리</h1>
+        <button id="new-requirement-btn" class="new-project-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+            + New Requirement
+        </button>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">요구사항</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">프로젝트</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">우선순위</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <!-- 더미 데이터 -->
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">REQ-001</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">사용자 로그인 및 인증 시스템</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">프로젝트 A</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-medium">높음</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="status-progress">검토 중</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button class="text-blue-600 hover:text-blue-800 mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">REQ-002</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">대시보드 데이터 시각화</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">프로젝트 A</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-yellow-500 font-medium">중간</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="status-completed">승인됨</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button class="text-blue-600 hover:text-blue-800 mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+                <tr class="hover:bg-gray-50">
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">REQ-003</td>
+                    <td class="px-6 py-4 text-sm font-medium text-gray-900">다크 모드 지원</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">프로젝트 B</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-green-500 font-medium">낮음</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                        <span class="status-planned">신규</span>
+                    </td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <button class="text-blue-600 hover:text-blue-800 mr-3">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                            </svg>
+                        </button>
+                        <button class="text-red-500 hover:text-red-700">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 모달 추가 영역 (구현을 위한 플레이스홀더) -->
+    <div id="requirement-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold mb-4">요구사항 추가</h2>
+            <p class="text-gray-500">이 기능은 현재 구현 중입니다.</p>
+            <div class="flex justify-end mt-4">
+                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all close-modal">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const newRequirementBtn = document.getElementById('new-requirement-btn');
+            const requirementModal = document.getElementById('requirement-modal');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            // 모달 이벤트
+            newRequirementBtn.addEventListener('click', function() {
+                requirementModal.classList.add('open');
+            });
+            
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    requirementModal.classList.remove('open');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

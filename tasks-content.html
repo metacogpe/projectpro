@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <h1 class="main-title mb-4 md:mb-0">태스크</h1>
+        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+            <select id="project-filter" class="border border-gray-300 rounded-lg p-2 focus:border-blue-600 focus:outline-none max-w-xs">
+                <option value="all">모든 프로젝트</option>
+                <!-- 프로젝트 목록이 여기에 동적으로 로드됨 -->
+            </select>
+            <button id="new-task-btn" class="new-project-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                + New Task
+            </button>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-blue-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">태스크</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">프로젝트</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">마감일</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">상태</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">담당자</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
+                </tr>
+            </thead>
+            <tbody id="tasks-table-body" class="bg-white divide-y divide-gray-200">
+                <!-- 태스크 데이터가 여기에 동적으로 로드됨 -->
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 모달 -->
+    <div id="task-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold mb-4" id="modal-title">태스크 추가</h2>
+            <form id="task-form">
+                <input type="hidden" id="edit-mode" value="false">
+                <input type="hidden" id="original-id" value="">
+                
+                <div class="mb-4">
+                    <label for="project" class="block text-sm font-medium text-gray-700 mb-1">프로젝트</label>
+                    <select id="project" name="project" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <!-- 프로젝트 목록이 여기에 동적으로 로드됨 -->
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">태스크 이름</label>
+                    <input type="text" id="name" name="name" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="dueDate" class="block text-sm font-medium text-gray-700 mb-1">마감일</label>
+                    <input type="date" id="dueDate" name="dueDate" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">상태</label>
+                    <select id="status" name="status" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <option value="예정">예정</option>
+                        <option value="진행 중">진행 중</option>
+                        <option value="완료">완료</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="assignee" class="block text-sm font-medium text-gray-700 mb-1">담당자</label>
+                    <input type="text" id="assignee" name="assignee" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">설명</label>
+                    <textarea id="description" name="description" rows="3" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none"></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all">취소</button>
+                    <button type="submit" id="submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">추가</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('태스크 콘텐츠 페이지 로드 완료');
+            
+            // 테스트용 코드
+            /*
+            // localStorage 새로고침
+            localStorage.removeItem('tasks');
+            localStorage.removeItem('projects');
+            console.log('localStorage 초기화');
+            */
+            
+            // 요소 참조
+            const tasksTableBody = document.getElementById('tasks-table-body');
+            const projectFilter = document.getElementById('project-filter');
+            const newTaskBtn = document.getElementById('new-task-btn');
+            const taskModal = document.getElementById('task-modal');
+            const taskForm = document.getElementById('task-form');
+            const projectSelect = document.getElementById('project');
+            const cancelBtn = document.getElementById('cancel-btn');
+            const modalTitle = document.getElementById('modal-title');
+            const submitBtn = document.getElementById('submit-btn');
+            const editMode = document.getElementById('edit-mode');
+            const originalId = document.getElementById('original-id');
+            
+            // 프로젝트 목록 로드
+            function loadProjects() {
+                const projects = JSON.parse(localStorage.getItem('projects')) || [];
+                
+                // 필터 드롭다운
+                projectFilter.innerHTML = '<option value="all">모든 프로젝트</option>';
+                projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.name;
+                    option.textContent = project.name;
+                    projectFilter.appendChild(option);
+                });
+                
+                // 모달 드롭다운
+                projectSelect.innerHTML = '';
+                projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.name;
+                    option.textContent = project.name;
+                    projectSelect.appendChild(option);
+                });
+            }
+            
+            // 태스크 테이블 렌더링
+            function renderTasks(projectFilter = 'all') {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                
+                // 날짜 기준 정렬
+                tasks.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+                
+                // 프로젝트별 필터링
+                const filteredTasks = projectFilter === 'all'
+                    ? tasks
+                    : tasks.filter(task => task.project === projectFilter);
+                
+                // 테이블 비우기
+                tasksTableBody.innerHTML = '';
+                
+                // 필터링된 태스크가 없을 경우
+                if (filteredTasks.length === 0) {
+                    const emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                            태스크가 없습니다.
+                        </td>
+                    `;
+                    tasksTableBody.appendChild(emptyRow);
+                    return;
+                }
+                
+                // 태스크 행 생성
+                filteredTasks.forEach(task => {
+                    const statusClass = 
+                        task.status === '완료' ? 'status-completed' : 
+                        task.status === '진행 중' ? 'status-progress' : 'status-planned';
+                    
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-gray-50 transition-all';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${task.name}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${task.project}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formatDate(task.dueDate)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm">
+                            <span class="${statusClass}">${task.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${task.assignee}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button class="edit-btn text-blue-600 hover:text-blue-800 mr-3" data-id="${task.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
+                            <button class="delete-btn text-red-500 hover:text-red-700" data-id="${task.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </td>
+                    `;
+                    tasksTableBody.appendChild(row);
+                });
+                
+                // 수정 버튼 이벤트 추가
+                document.querySelectorAll('.edit-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const taskId = parseInt(this.dataset.id);
+                        editTask(taskId);
+                    });
+                });
+                
+                // 삭제 버튼 이벤트 추가
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const taskId = parseInt(this.dataset.id);
+                        deleteTask(taskId);
+                    });
+                });
+            }
+            
+            // 태스크 수정 함수
+            function editTask(taskId) {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                const task = tasks.find(t => t.id === taskId);
+                
+                if (task) {
+                    // 모달 설정
+                    modalTitle.textContent = '태스크 수정';
+                    submitBtn.textContent = '저장';
+                    editMode.value = 'true';
+                    originalId.value = taskId;
+                    
+                    // 폼 값 설정
+                    document.getElementById('project').value = task.project;
+                    document.getElementById('name').value = task.name;
+                    document.getElementById('dueDate').value = task.dueDate;
+                    document.getElementById('status').value = task.status;
+                    document.getElementById('assignee').value = task.assignee;
+                    document.getElementById('description').value = task.description || '';
+                    
+                    // 모달 열기
+                    taskModal.classList.add('open');
+                }
+            }
+            
+            // 태스크 삭제 함수
+            function deleteTask(taskId) {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                const task = tasks.find(t => t.id === taskId);
+                
+                if (task && confirm(`"${task.name}" 태스크를 삭제하시겠습니까?`)) {
+                    const updatedTasks = tasks.filter(t => t.id !== taskId);
+                    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+                    
+                    // 테이블 갱신
+                    renderTasks(projectFilter.value);
+                }
+            }
+            
+            // 날짜 포맷팅 함수
+            function formatDate(dateString) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString('ko-KR', options);
+            }
+            
+            // 새 태스크 ID 생성 함수
+            function generateTaskId() {
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                return tasks.length > 0 ? Math.max(...tasks.map(t => t.id)) + 1 : 1;
+            }
+            
+            // 이벤트 리스너
+            newTaskBtn.addEventListener('click', function() {
+                // 모달 초기화
+                taskForm.reset();
+                modalTitle.textContent = '태스크 추가';
+                submitBtn.textContent = '추가';
+                editMode.value = 'false';
+                
+                // 모달 열기
+                taskModal.classList.add('open');
+            });
+            
+            cancelBtn.addEventListener('click', function() {
+                taskModal.classList.remove('open');
+            });
+            
+            projectFilter.addEventListener('change', function() {
+                renderTasks(this.value);
+            });
+            
+            taskForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const isEditMode = editMode.value === 'true';
+                
+                const taskData = {
+                    name: document.getElementById('name').value,
+                    project: document.getElementById('project').value,
+                    dueDate: document.getElementById('dueDate').value,
+                    status: document.getElementById('status').value,
+                    assignee: document.getElementById('assignee').value,
+                    description: document.getElementById('description').value
+                };
+                
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                
+                if (isEditMode) {
+                    // 수정 모드
+                    const taskId = parseInt(originalId.value);
+                    const index = tasks.findIndex(t => t.id === taskId);
+                    
+                    if (index !== -1) {
+                        taskData.id = taskId;
+                        tasks[index] = taskData;
+                    }
+                } else {
+                    // 추가 모드
+                    taskData.id = generateTaskId();
+                    tasks.push(taskData);
+                }
+                
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                
+                // 모달 닫기 및 테이블 갱신
+                taskModal.classList.remove('open');
+                renderTasks(projectFilter.value);
+            });
+            
+            // 초기화
+            loadProjects();
+            renderTasks();
+        });
+    </script>
+</body>
+</html>

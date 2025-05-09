@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 1.5rem;
+        }
+        .guide-section {
+            margin-bottom: 2rem;
+        }
+        .guide-card {
+            transition: all 0.3s ease;
+        }
+        .guide-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1 class="main-title mb-6">가이드</h1>
+    
+    <div class="guide-section">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">시스템 사용 방법</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="guide-card bg-white p-6 rounded-xl shadow-md border-l-4 border-blue-600">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">프로젝트 관리</h3>
+                <p class="text-gray-600 mb-4">프로젝트를 생성하고, 수정하고, 삭제하는 방법에 대한 가이드입니다.</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li>사이드바에서 '프로젝트' 메뉴를 선택합니다.</li>
+                    <li>'+ New Project' 버튼을 클릭하여 새 프로젝트를 생성합니다.</li>
+                    <li>프로젝트 이름, 마감일, 상태, 설명을 입력합니다.</li>
+                    <li>편집 또는 삭제 버튼으로 기존 프로젝트를 관리합니다.</li>
+                </ul>
+            </div>
+            <div class="guide-card bg-white p-6 rounded-xl shadow-md border-l-4 border-indigo-600">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">마일스톤 관리</h3>
+                <p class="text-gray-600 mb-4">프로젝트 마일스톤을 추가하고 관리하는 방법에 대한 가이드입니다.</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li>사이드바에서 '마일스톤' 메뉴를 선택합니다.</li>
+                    <li>프로젝트 드롭다운에서 관련 프로젝트를 선택합니다.</li>
+                    <li>'+ New Milestone' 버튼을 클릭하여 새 마일스톤을 추가합니다.</li>
+                    <li>마일스톤 이름, 날짜, 상태, 설명을 입력합니다.</li>
+                    <li>삭제 버튼으로 기존 마일스톤을 제거할 수 있습니다.</li>
+                </ul>
+            </div>
+            <div class="guide-card bg-white p-6 rounded-xl shadow-md border-l-4 border-purple-600">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">산출물 관리</h3>
+                <p class="text-gray-600 mb-4">프로젝트 산출물을 추가하고 관리하는 방법에 대한 가이드입니다.</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li>사이드바에서 '산출물' 메뉴를 선택합니다.</li>
+                    <li>프로젝트 드롭다운에서 관련 프로젝트를 선택합니다.</li>
+                    <li>'+ New Deliverable' 버튼을 클릭하여 새 산출물을 추가합니다.</li>
+                    <li>산출물 이름, 날짜, 상태, 설명을 입력합니다.</li>
+                    <li>삭제 버튼으로 기존 산출물을 제거할 수 있습니다.</li>
+                </ul>
+            </div>
+            <div class="guide-card bg-white p-6 rounded-xl shadow-md border-l-4 border-green-600">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">태스크 관리</h3>
+                <p class="text-gray-600 mb-4">프로젝트 태스크를 추가하고 관리하는 방법에 대한 가이드입니다.</p>
+                <ul class="list-disc list-inside text-gray-600 space-y-1">
+                    <li>사이드바에서 '태스크' 메뉴를 선택합니다.</li>
+                    <li>프로젝트 드롭다운에서 관련 프로젝트를 선택합니다.</li>
+                    <li>'+ New Task' 버튼을 클릭하여 새 태스크를 추가합니다.</li>
+                    <li>태스크 이름, 마감일, 상태, 담당자를 입력합니다.</li>
+                    <li>편집 또는 삭제 버튼으로 기존 태스크를 관리합니다.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="guide-section">
+        <h2 class="text-xl font-semibold text-gray-900 mb-4">자주 묻는 질문</h2>
+        <div class="bg-white rounded-xl shadow-md overflow-hidden">
+            <div class="divide-y divide-gray-200">
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">데이터는 어디에 저장되나요?</h3>
+                    <p class="text-gray-600">현재 데이터는 브라우저의 localStorage에 저장됩니다. 브라우저 캐시를 지우면 데이터가 삭제될 수 있으니 주의하세요.</p>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">여러 사용자가 동시에 작업할 수 있나요?</h3>
+                    <p class="text-gray-600">현재 버전에서는 동시 작업이 지원되지 않습니다. 향후 버전에서 서버 기반 데이터 저장 및 실시간 협업 기능이 추가될 예정입니다.</p>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">데이터를 내보내거나 가져올 수 있나요?</h3>
+                    <p class="text-gray-600">현재 버전에서는 데이터 내보내기/가져오기 기능이 지원되지 않습니다. 향후 업데이트에서 CSV 및 JSON 형식의 데이터 내보내기/가져오기 기능이 추가될 예정입니다.</p>
+                </div>
+                <div class="p-6">
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">모바일에서도 사용할 수 있나요?</h3>
+                    <p class="text-gray-600">네, 이 시스템은 반응형으로 설계되어 모바일 환경에서도 사용할 수 있습니다. 작은 화면에서는 사이드바가 숨겨지며, 헤더의 메뉴 아이콘을 통해 접근할 수 있습니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-8 text-center">
+        <p class="text-gray-500">추가 문의사항이 있으신가요? <a href="#" class="text-blue-600 hover:underline">support@projectmanager.com</a>으로 문의해주세요.</p>
+    </div>
+</body>
+</html>

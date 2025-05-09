@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center">
+        <h1 class="main-title mb-4 md:mb-0">마일스톤</h1>
+        <div class="flex flex-col md:flex-row gap-3 w-full md:w-auto">
+            <select id="project-filter" class="border border-gray-300 rounded-lg p-2 focus:border-blue-600 focus:outline-none max-w-xs">
+                <option value="all">모든 프로젝트</option>
+                <!-- 프로젝트 목록이 여기에 동적으로 로드됨 -->
+            </select>
+            <button id="new-milestone-btn" class="new-project-btn bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-all">
+                + New Milestone
+            </button>
+        </div>
+    </div>
+
+    <div id="milestone-timeline" class="timeline ml-4">
+        <!-- 마일스톤 타임라인이 여기에 동적으로 로드됨 -->
+    </div>
+
+    <!-- 모달 -->
+    <div id="milestone-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-semibold mb-4">마일스톤 추가</h2>
+            <form id="milestone-form">
+                <div class="mb-4">
+                    <label for="project" class="block text-sm font-medium text-gray-700 mb-1">프로젝트</label>
+                    <select id="project" name="project" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <!-- 프로젝트 목록이 여기에 동적으로 로드됨 -->
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">이름</label>
+                    <input type="text" id="name" name="name" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                </div>
+                <div class="mb-4">
+                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1">날짜</label>
+                    <input type="date" id="date" name="date" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                </div>
+                <div class="mb-4">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">상태</label>
+                    <select id="status" name="status" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <option value="예정">예정</option>
+                        <option value="진행 중">진행 중</option>
+                        <option value="완료">완료</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">설명</label>
+                    <textarea id="description" name="description" rows="3" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none"></textarea>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all">취소</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">추가</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 데이터 초기화
+            if (!localStorage.getItem('projects')) {
+                const initialProjects = [
+                    { name: '프로젝트 A', dueDate: '2025-12-31', status: '진행 중', description: '웹 애플리케이션 개발' },
+                    { name: '프로젝트 B', dueDate: '2025-06-30', status: '계획', description: '모바일 앱 런칭' }
+                ];
+                localStorage.setItem('projects', JSON.stringify(initialProjects));
+            }
+
+            if (!localStorage.getItem('milestones')) {
+                const initialMilestones = [
+                    { project: '프로젝트 A', name: '초기 설계 완료', date: '2025-03-01', status: '완료', description: '시스템 아키텍처 설계' },
+                    { project: '프로젝트 A', name: '프로토타입 개발', date: '2025-06-01', status: '진행 중', description: 'UI/UX 프로토타입' },
+                    { project: '프로젝트 B', name: '시장 조사', date: '2025-02-15', status: '예정', description: '사용자 요구 분석' }
+                ];
+                localStorage.setItem('milestones', JSON.stringify(initialMilestones));
+            }
+
+            // 요소 참조
+            const projectFilterEl = document.getElementById('project-filter');
+            const timelineEl = document.getElementById('milestone-timeline');
+            const newMilestoneBtn = document.getElementById('new-milestone-btn');
+            const modalEl = document.getElementById('milestone-modal');
+            const formEl = document.getElementById('milestone-form');
+            const projectSelectEl = document.getElementById('project');
+            const cancelBtn = document.getElementById('cancel-btn');
+
+            // 프로젝트 드롭다운 로드
+            function loadProjectDropdowns() {
+                const projects = JSON.parse(localStorage.getItem('projects'));
+                
+                // 필터 드롭다운
+                projectFilterEl.innerHTML = '<option value="all">모든 프로젝트</option>';
+                projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.name;
+                    option.textContent = project.name;
+                    projectFilterEl.appendChild(option);
+                });
+                
+                // 모달 드롭다운
+                projectSelectEl.innerHTML = '';
+                projects.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.name;
+                    option.textContent = project.name;
+                    projectSelectEl.appendChild(option);
+                });
+            }
+
+            // 타임라인 렌더링
+            function renderTimeline(projectFilter = 'all') {
+                const milestones = JSON.parse(localStorage.getItem('milestones'));
+                
+                // 날짜 기준 정렬
+                milestones.sort((a, b) => new Date(a.date) - new Date(b.date));
+                
+                // 필터링
+                const filteredMilestones = projectFilter === 'all' 
+                    ? milestones 
+                    : milestones.filter(ms => ms.project === projectFilter);
+                
+                // 타임라인 렌더링
+                timelineEl.innerHTML = '';
+                
+                if (filteredMilestones.length === 0) {
+                    timelineEl.innerHTML = '<div class="text-gray-500 py-4">해당 프로젝트에 마일스톤이 없습니다.</div>';
+                    return;
+                }
+                
+                filteredMilestones.forEach((milestone, index) => {
+                    const statusClass = milestone.status === '완료' 
+                        ? 'status-completed' 
+                        : milestone.status === '진행 중' 
+                            ? 'status-progress' 
+                            : 'status-planned';
+                    
+                    const item = document.createElement('div');
+                    item.className = 'milestone-item bg-white p-4 rounded-md shadow-md hover:translate-y-[-2px] transition-all';
+                    item.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-semibold text-gray-900 text-base">${milestone.name}</h3>
+                                <p class="text-sm text-gray-600">${milestone.project} · ${formatDate(milestone.date)}</p>
+                                <p class="text-sm ${statusClass} font-medium mt-1">${milestone.status}</p>
+                                <p class="text-sm text-gray-600 mt-3">${milestone.description || ''}</p>
+                            </div>
+                            <button class="delete-btn text-red-500 hover:text-red-700" data-index="${index}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    timelineEl.appendChild(item);
+                });
+                
+                // 삭제 버튼 이벤트 추가
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const milestones = JSON.parse(localStorage.getItem('milestones'));
+                        const index = parseInt(this.dataset.index);
+                        const milestone = filteredMilestones[index];
+                        
+                        if (confirm(`"${milestone.name}" 마일스톤을 삭제하시겠습니까?`)) {
+                            // 원래 배열에서 해당 마일스톤 찾기
+                            const originalIndex = milestones.findIndex(ms => 
+                                ms.project === milestone.project && 
+                                ms.name === milestone.name && 
+                                ms.date === milestone.date
+                            );
+                            
+                            if (originalIndex > -1) {
+                                milestones.splice(originalIndex, 1);
+                                localStorage.setItem('milestones', JSON.stringify(milestones));
+                                renderTimeline(projectFilterEl.value);
+                            }
+                        }
+                    });
+                });
+            }
+
+            // 날짜 포맷팅 함수
+            function formatDate(dateString) {
+                const options = { year: 'numeric', month: 'long', day: 'numeric' };
+                return new Date(dateString).toLocaleDateString('ko-KR', options);
+            }
+
+            // 이벤트 리스너
+            newMilestoneBtn.addEventListener('click', function() {
+                formEl.reset();
+                modalEl.classList.add('open');
+            });
+
+            cancelBtn.addEventListener('click', function() {
+                modalEl.classList.remove('open');
+            });
+
+            projectFilterEl.addEventListener('change', function() {
+                renderTimeline(this.value);
+            });
+
+            formEl.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newMilestone = {
+                    project: projectSelectEl.value,
+                    name: document.getElementById('name').value,
+                    date: document.getElementById('date').value,
+                    status: document.getElementById('status').value,
+                    description: document.getElementById('description').value
+                };
+                
+                const milestones = JSON.parse(localStorage.getItem('milestones'));
+                milestones.push(newMilestone);
+                localStorage.setItem('milestones', JSON.stringify(milestones));
+                
+                modalEl.classList.remove('open');
+                renderTimeline(projectFilterEl.value);
+            });
+
+            // 초기화 함수
+            function init() {
+                loadProjectDropdowns();
+                renderTimeline();
+            }
+
+            // 초기화 호출
+            init();
+        });
+    </script>
+</body>
+</html>
