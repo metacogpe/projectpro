@@ -34,7 +34,7 @@
                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">작업</th>
                 </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
+            <tbody class="bg-white divide-y divide-gray-200" id="requirements-table-body">
                 <!-- 더미 데이터 -->
                 <tr class="hover:bg-gray-50">
                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">REQ-001</td>
@@ -103,33 +103,63 @@
         </table>
     </div>
 
-    <!-- 모달 추가 영역 (구현을 위한 플레이스홀더) -->
+    <!-- 모달 -->
     <div id="requirement-modal" class="modal">
         <div class="modal-content">
-            <h2 class="text-xl font-semibold mb-4">요구사항 추가</h2>
-            <p class="text-gray-500">이 기능은 현재 구현 중입니다.</p>
-            <div class="flex justify-end mt-4">
-                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all close-modal">닫기</button>
-            </div>
+            <h2 class="text-xl font-semibold mb-4" id="modal-title">요구사항 추가</h2>
+            <form id="requirement-form">
+                <input type="hidden" id="edit-mode" value="false">
+                <input type="hidden" id="original-id" value="">
+                
+                <div class="mb-4">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-1">요구사항 이름</label>
+                    <input type="text" id="name" name="name" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="project" class="block text-sm font-medium text-gray-700 mb-1">프로젝트</label>
+                    <select id="project" name="project" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <!-- 프로젝트 목록이 여기에 동적으로 로드됨 -->
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="priority" class="block text-sm font-medium text-gray-700 mb-1">우선순위</label>
+                    <select id="priority" name="priority" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <option value="높음">높음</option>
+                        <option value="중간">중간</option>
+                        <option value="낮음">낮음</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="status" class="block text-sm font-medium text-gray-700 mb-1">상태</label>
+                    <select id="status" name="status" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none" required>
+                        <option value="신규">신규</option>
+                        <option value="검토 중">검토 중</option>
+                        <option value="승인됨">승인됨</option>
+                        <option value="반려됨">반려됨</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700 mb-1">설명</label>
+                    <textarea id="description" name="description" rows="3" class="w-full border border-gray-300 p-2 rounded-md focus:border-blue-600 focus:outline-none"></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-2">
+                    <button type="button" id="cancel-btn" class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all">취소</button>
+                    <button type="submit" id="submit-btn" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all">추가</button>
+                </div>
+            </form>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const newRequirementBtn = document.getElementById('new-requirement-btn');
-            const requirementModal = document.getElementById('requirement-modal');
-            const closeModalBtns = document.querySelectorAll('.close-modal');
-            
-            // 모달 이벤트
-            newRequirementBtn.addEventListener('click', function() {
-                requirementModal.classList.add('open');
-            });
-            
-            closeModalBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    requirementModal.classList.remove('open');
-                });
-            });
+            // 페이지 초기화 및 스크립트 로드
+            // 이 코드는 script.js의 loadPageScript 함수에 의해 자동으로 만들어진 JS 파일을 로드하기 위한 부분입니다.
+            console.log('요구사항 관리 페이지 로드 완료');
         });
     </script>
 </body>

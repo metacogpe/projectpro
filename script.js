@@ -188,7 +188,8 @@ document.addEventListener('DOMContentLoaded', function() {
             'deliverables-content.html': 'js/deliverables.js',
             'projects-content.html': 'js/projects.js',
             'tasks-content.html': 'js/tasks.js',
-            'dashboard-content.html': 'js/dashboard.js'
+            'dashboard-content.html': 'js/dashboard.js',
+            'requirements-content.html': 'js/requirements.js'
         };
         
         // URL에 해당하는 스크립트 파일이 있으면 로드
